@@ -4,7 +4,7 @@ Sub Monthlyfeerun()
     
     Dim LR As Long
 	Dim wsBatchID As Worksheet
-    Dim wbTarget As Workbook 'Monthly Rec template
+    Dim wbTarget As Workbook 
     Dim wsSummary As Worksheet
     Dim wsAILSummary As Worksheet
     Dim wsBatchData As Worksheet
@@ -15,12 +15,11 @@ Sub Monthlyfeerun()
     Dim wsBaseDataInsurance As Worksheet
     Dim wsBaseDataRE As Worksheet
     Dim wsBaseDataIM As Worksheet
-    Dim wbSource As Workbook ' Rec reports
-    Dim wsSource As Worksheet ' BaseData tabs of the Rec reports
     Dim wsBaseData As Worksheet
     Dim mypath As String 
-    Dim mypath2 As String ' leads to Rec reports
+    Dim mypath2 As String 
 
+	'Rec Files:
     Dim wbAILPaidReport As Workbook
     Dim wbClientFeeRebate As Workbook
     Dim wbCustodyandAdministrationFees As Workbook
@@ -85,227 +84,143 @@ Sub Monthlyfeerun()
     LR = wsBaseData.Cells(wsBaseData.Rows.Count, "A").End(xlUp).Row
     wsBaseData.Range("A2:AM" & LR).Copy wsBaseDataTech.Range("A2").End(xlDown).Offset(1, 0)
     wbDeferredLenderFees.Close savechanges:=False
-    
 
     'Copy 'Model Paid Fees' data into "BaseData - Tech" tab
     Set wbModelPaidFees = Workbooks.Open(mypath & "Model Paid Fees.xls")
-    
     Set wsBaseData = wbModelPaidFees.Sheets("BaseData")
-    
     LR = wsBaseData.Cells(wsBaseData.Rows.Count, "A").End(xlUp).Row
-    
     wsBaseData.Range("A2:AM" & LR).Copy wsBaseDataTech.Range("A2").End(xlDown).Offset(1, 0)
-    
     wbModelPaidFees.Close savechanges:=False
-    
     
     'Copy 'Custody and Administration Fees' data into "BaseData - Tech" tab
     Set wbCustodyandAdministrationFees = Workbooks.Open(mypath & "Custody and Administration Fees.xls")
-    
     Set wsBaseData = wbCustodyandAdministrationFees.Sheets("BaseData")
-    
     LR = wsBaseData.Cells(wsBaseData.Rows.Count, "A").End(xlUp).Row
-    
     wsBaseData.Range("A2:AM" & LR).Copy wsBaseDataTech.Range("A2").End(xlDown).Offset(1, 0)
-    
     wbCustodyandAdministrationFees.Close savechanges:=False
-    
 
     'Copy 'Tech Provider Fees' data into "BaseData - Tech" tab
     Set wbTechProviderFees = Workbooks.Open(mypath & "Tech Provider Fees.xlsx")
-    
     Set wsBaseData = wbTechProviderFees.Sheets("BaseData")
-    
     LR = wsBaseData.Cells(wsBaseData.Rows.Count, "A").End(xlUp).Row
-    
     wsBaseData.Range("A2:AM" & LR).Copy wsBaseDataTech.Range("A2").End(xlDown).Offset(1, 0)
-    
     wbTechProviderFees.Close savechanges:=False
-    
     
     'Copy 'Non-AFSL rebate Fees' data into "BaseData - Dealer" tab
     Set wbNonAFSLrebateFees = Workbooks.Open(mypath & "Non-AFSL rebate Fees.xls")
-    
     Set wsBaseData = wbNonAFSLrebateFees.Sheets("BaseData")
-    
     LR = wsBaseData.Cells(wsBaseData.Rows.Count, "A").End(xlUp).Row
-    
     wsBaseData.Cells.AutoFilter
     wsBaseData.Range("A1:AP" & LR).AutoFilter Field:=21, Criteria1:="PendingExternalBank"
-    
     wsBaseData.Range("A2:AP" & LR).Copy wsBaseDataDealer.Range("A2")
-    
     wbNonAFSLrebateFees.Close savechanges:=False
-
 
     'Copy 'Dealer Unpaid Fees' data into "BaseData - Dealer" tab
     Set wbDealerUnpaidFees = Workbooks.Open(mypath & "Dealer Unpaid Fees.xlsx")
-    
     Set wsBaseData = wbDealerUnpaidFees.Sheets("BaseData")
-    
     LR = wsBaseData.Cells(wsBaseData.Rows.Count, "A").End(xlUp).Row
-    
     wsBaseData.Cells.AutoFilter
     wsBaseData.Range("A1:AP" & LR).AutoFilter Field:=21, Criteria1:="PendingExternalBank"
-    
     wsBaseData.Range("A2:AP" & LR).Copy wsBaseDataDealer.Range("A2").End(xlDown).Offset(1, 0)
-    
     wbDealerUnpaidFees.Close savechanges:=False
-    
 
     'Copy 'Insurance Fees' data 'BaseData - Insurance" tab 
     Set wbInsuranceFees = Workbooks.Open(mypath & "Insurance Fees.xls")
-    
     Set wsBaseData = wbInsuranceFees.Sheets("BaseData")
-    
     LR = wsBaseData.Cells(wsBaseData.Rows.Count, "A").End(xlUp).Row
-    
     wsBaseData.Cells.AutoFilter
     wsBaseData.Range("A1:AP" & LR).AutoFilter Field:=21, Criteria1:="PendingExternalBank"
-    
     wsBaseData.Range("A2:AP" & LR).Copy wsBaseDataInsurance.Range("A2").End(xlDown).Offset(0, 1)
-    
     wbInsuranceFees.Close savechanges:=False
-    
 
     'Copy 'Dealer Rebate Fees' data into 'BaseData - Dealer" tab
     Set wbDealerRebateFees = Workbooks.Open(mypath & "Dealer Rebate Fees.xls")
-    
     Set wsBaseData = wbDealerRebateFees.Sheets("BaseData")
-    
     LR = wsBaseData.Cells(wsBaseData.Rows.Count, "A").End(xlUp).Row
-    
     wsBaseData.Cells.AutoFilter
     wsBaseData.Range("A1:AP" & LR).AutoFilter Field:=21, Criteria1:="PendingExternalBank"
-    
     wsBaseData.Range("A2:AP" & LR).Copy wsBaseDataDealer.Range("A2").End(xlDown).Offset(0, 1)
-    
     wbDealerRebateFees.Close savechanges:=False
-    
 
     'Copy 'Model Unpaid Fees' data 'BaseData - Dealer" tab
     Set wbModelUnpaidFees = Workbooks.Open(mypath & "Model Unpaid Fees.xls")
-    
     Set wsBaseData = wbModelUnpaidFees.Sheets("BaseData")
-    
     LR = wsBaseData.Cells(wsBaseData.Rows.Count, "A").End(xlUp).Row
-    
     wsBaseData.Cells.AutoFilter
     wsBaseData.Range("A1:AP" & LR).AutoFilter Field:=21, Criteria1:="PendingExternalBank"
     wsBaseData.Range("A1:AP" & LR).AutoFilter Field:=35, Criteria1:="*dealer*"
     wsBaseData.Range("A2:AP" & LR).Copy wsBaseDataDealer.Range("A2").End(xlDown).Offset(0, 1)
-    
     wbModelUnpaidFees.Close savechanges:=False
 
     'Copy 'Model Unpaid Fees' data into "BaseData - Customer" tab.
     Set wbModelUnpaidFees = Workbooks.Open(mypath & "Model Unpaid Fees.xls")
-    
     Set wsBaseData = wbModelUnpaidFees.Sheets("BaseData")
-    
     LR = wsBaseData.Cells(wsBaseData.Rows.Count, "A").End(xlUp).Row
-    
     wsBaseData.Cells.AutoFilter
     wsBaseData.Range("A1:AP" & LR).AutoFilter Field:=21, Criteria1:="PendingExternalBank"
     wsBaseData.Range("A1:AP" & LR).AutoFilter Field:=35, Criteria1:="*Customer*"
     wsBaseData.Range("A2:AP" & LR).Copy wsBaseDataCustomer.Range("A2")
-    
     wbModelUnpaidFees.Close savechanges:=False
-
-    
+   
     'Copy 'Responsible Entity Fees' data into "BaseData - RE" tab
     Set wbResponsibleEntityFees = Workbooks.Open(mypath & "Responsible Entity Fees.xls")
-    
     Set wsBaseData = wbResponsibleEntityFees.Sheets("BaseData")
-    
     LR = wsBaseData.Cells(wsBaseData.Rows.Count, "A").End(xlUp).Row
-    
     wsBaseData.Range("A2:AP" & LR).Copy wsBaseDataRE.Range("A2")
-    
     wbResponsibleEntityFees.Close savechanges:=False
-
 
     'Copy 'Investment Manager Fees' data into "BaseData - IM" tab
     Set wbInvestmentManagerFees = Workbooks.Open(mypath & "Investment Manager Fees.xls")
-    
     Set wsBaseData = wbInvestmentManagerFees.Sheets("BaseData")
-    
     LR = wsBaseData.Cells(wsBaseData.Rows.Count, "A").End(xlUp).Row
-    
     wsBaseData.Cells.AutoFilter
     wsBaseData.Range("A1:AP" & LR).AutoFilter Field:=21, Criteria1:="PendingExternalBank"
-    
     wsBaseData.Range("A2:AP" & LR).Copy wsBaseDataIM.Range("A2")
-    
     wbInvestmentManagerFees.Close savechanges:=False
-
 
     'Copy 'Implementation Fees' data into "BaseData - tech" tab
     Set wbImplementationFees = Workbooks.Open(mypath & "Implementation Fees.xls")
-    
     Set wsBaseData = wbImplementationFees.Sheets("BaseData")
-    
     LR = wsBaseData.Cells(wsBaseData.Rows.Count, "A").End(xlUp).Row
-    
     wsBaseData.Range("A2:AP" & LR).Copy wsBaseDataTech.Range("A2").End(xlDown).Offset(1, 0)
-    
     wbImplementationFees.Close savechanges:=False
-
 
     'Copy 'Responsible Entity Fees IM' data into "BaseData - RE" tab
     Set wbResponsibleEntityIMunpaid = Workbooks.Open(mypath & "Responsible Entity Fees IM.xls")
-    
     Set wsBaseData = wbResponsibleEntityIMunpaid.Sheets("BaseData")
-    
     LR = wsBaseData.Cells(wsBaseData.Rows.Count, "A").End(xlUp).Row
-
     wsBaseData.Cells.AutoFilter
     wsBaseData.Range("A1:AP" & LR).AutoFilter Field:=21, Criteria1:="PendingExternalBank"
-    
     wsBaseData.Range("A2:AP" & LR).Copy wsBaseDataRE.Range("A2").End(xlDown).Offset(1, 0)
-
     wbResponsibleEntityIMunpaid.Close savechanges:=False
-
 
     'Copy 'Customer Unpaid Fees' data into "BaseData - Customer" tab
     Set wbCustomerUnpaidFees = Workbooks.Open(mypath & "Customer Unpaid Fees.xls")
-    
     Set wsBaseData = wbCustomerUnpaidFees.Sheets("BaseData")
-    
     LR = wsBaseData.Cells(wsBaseData.Rows.Count, "A").End(xlUp).Row
-
     wsBaseData.Cells.AutoFilter
     wsBaseData.Range("A1:AP" & LR).AutoFilter Field:=21, Criteria1:="PendingExternalBank"
-    
     wsBaseData.Range("A2:AP" & LR).Copy wsBaseDataCustomer.Range("A2").End(xlDown).Offset(1, 0)
-
     wbCustomerUnpaidFees.Close savechanges:=False
-
 
     'Copy 'Bank Batches' data into "BankBatchData" tab
     Set wbBankBatchData = Workbooks.Open(mypath2 & "Bank Batch Data.xls")
-    
     Set wsBaseData = wbBankBatchData.Sheets(1)
-    
     LR = wsBaseData.Cells(wsBaseData.Rows.Count, "A").End(xlUp).Row
-
     wsBaseData.Range("A2:AP" & LR).Copy wsBatchData.Range("A2")
-
     wbBankBatchData.Close savechanges:=False
 
+	'copy Batch numbers into rec.
+	wsBatchID.Range("B2", Range("B2").End(xlDown)).Copy wsSummary.Range("M20")
 
-'copy Batch numbers into rec.
-wsBatchID.Range("B2", Range("B2").End(xlDown)).Copy wsSummary.Range("M20")
-
-
-'Refresh pivot table tab
-Dim pt As PivotTable
-Dim ws As Worksheet
-For Each ws In ActiveWorkbook.Worksheets
-    For Each pt In ws.PivotTables
-        pt.RefreshTable
-    Next pt
-Next ws
-
+	'Refresh pivot table tab
+	Dim pt As PivotTable
+	Dim ws As Worksheet
+	For Each ws In ActiveWorkbook.Worksheets
+		For Each pt In ws.PivotTables
+			pt.RefreshTable
+		Next pt
+	Next ws
 
 	'Return to summary screen and clean up batch lines
     Sheets("Summary").Range("M19:N45").Select
@@ -371,32 +286,23 @@ Next ws
         .TintAndShade = 0
         .ThemeFont = xlThemeFontMinor
     End With
-    
 
 'input release date of batches - usually on Day 5 of fee run, hence Day (now) +2
 
 Dim d As Integer
-
+'mydate = Evaluate("WORKDAY(TODAY(),2)")
 d = Day(Now) + 2
 
-    Range("V26").Select
-    Selection.Font.Bold = True
-    Selection.Font.Italic = True
-    Selection.Copy
-    Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _
-        :=False, Transpose:=False
-
-'input monthly fee run month into cell u20
-
-    Range("U21").Select
-    Selection.Copy
-    Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _
-        :=False, Transpose:=False
-    Range("T20").Select
-    
-'align table coloumns M to V to show amounts
-
-    Columns("M:V").Select
+    With Range("V26")
+		.Font.Bold = True
+		.Font.Italic = True
+		.Copy
+		.PasteSpecial xlPasteValues
+	End With
+	
+	'input monthly fee run month into cell u20
+    Range("U21").Copy 
+    Range("U21").PasteSpecial xlPasteValues
     Columns("M:V").EntireColumn.AutoFit
 
 'Automatically save file into desired location
