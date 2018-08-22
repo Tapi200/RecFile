@@ -3,24 +3,11 @@ Option Explicit
 Sub Monthlyfeerun()
     
     Dim LR As Long
-    Dim wsBatchID As Worksheet
-    Dim wbTarget As Workbook
-    Dim wsSummary As Worksheet
-    Dim wsAILSummary As Worksheet
-    Dim wsBatchData As Worksheet
-    Dim wsPivots As Worksheet
-    Dim wsBaseDataDealer As Worksheet
-    Dim wsBaseDataCustomer As Worksheet
-    Dim wsBaseDataTech As Worksheet
-    Dim wsBaseDataInsurance As Worksheet
-    Dim wsBaseDataRE As Worksheet
-    Dim wsBaseDataIM As Worksheet
-    Dim wsBaseData As Worksheet
-    Dim wsPivots As Worksheet
     Dim mypath As String
     Dim mypath2 As String
+    Dim ws As Worksheet
 
-    'Rec Files:
+    Dim wbTarget As Workbook
     Dim wbAILPaidReport As Workbook
     Dim wbClientFeeRebate As Workbook
     Dim wbCustodyandAdministrationFees As Workbook
@@ -39,39 +26,57 @@ Sub Monthlyfeerun()
     Dim wbResponsibleEntityIMunpaid   As Workbook
     Dim wbInvestmentManagerFees   As Workbook
     Dim wbBankBatchData   As Workbook
-    Dim pt As PivotTable
     
+    Dim pt As PivotTable
+
+    Dim wsBatchID As Worksheet
+    Dim wsSummary As Worksheet
+    Dim wsAILSummary As Worksheet
+    Dim wsBatchData As Worksheet
+    Dim wsPivots As Worksheet
+    Dim wsBaseDataDealer As Worksheet
+    Dim wsBaseDataCustomer As Worksheet
+    Dim wsBaseDataTech As Worksheet
+    Dim wsBaseDataInsurance As Worksheet
+    Dim wsBaseDataRE As Worksheet
+    Dim wsBaseDataIM As Worksheet
+    Dim wsBaseData As Worksheet
+    Dim wsByProduct As Worksheet
+
     'Open Fee run template)
     Set wbTarget = Workbooks.Open(FileName:= _
          "L:\Fees\Reporting\Reconciliations\Monthly Fee Reconciliation Macro\Monthly Fee Run Reports\Monthly Rec Summary - Template.xlsm")
 
-    Set wsSummary = wbTarget.Sheets("Summary")
-    Set wsAILSummary = wbTarget.Sheets("AIL Summary")
-    Set wsBatchData = wbTarget.Sheets("BatchData")
-    Set wsPivots = wbTarget.Sheets("Pivots")
-    Set wsBaseDataDealer = wbTarget.Sheets("BaseData - Dealer")
-    Set wsBaseDataCustomer = wbTarget.Sheets("BaseData - Customer")
-    Set wsBaseDataTech = wbTarget.Sheets("BaseData - Tech")
-    Set wsBaseDataInsurance = wbTarget.Sheets("BaseData - Insurance")
-    Set wsBaseDataRE = wbTarget.Sheets("BaseData - RE")
-    Set wsBaseDataIM = wbTarget.Sheets("BaseData - IM")
-    Set wsBatchID = ThisWorkbook.Worksheets("Fee Batches")
-    Set wsPivots = wbTarget.Sheets("Pivots")
+    With wbTarget
+        Set wsSummary = .Sheets("Summary")
+        Set wsAILSummary = .Sheets("AIL Summary")
+        Set wsBatchData = .Sheets("BatchData")
+        Set wsPivots = .Sheets("Pivots")
+        Set wsBaseDataDealer = .Sheets("BaseData - Dealer")
+        Set wsBaseDataCustomer = .Sheets("BaseData - Customer")
+        Set wsBaseDataTech = .Sheets("BaseData - Tech")
+        Set wsBaseDataInsurance = .Sheets("BaseData - Insurance")
+        Set wsBaseDataRE = .Sheets("BaseData - RE")
+        Set wsBaseDataIM = .Sheets("BaseData - IM")
+        Set wsBatchID = ThisWorkbook.Worksheets("Fee Batches")
+    End With
     
     mypath = "L:\Fees\Reporting\Reconciliations\Monthly Fee Reconciliation Macro\Monthly Fee Run Reports\Reports\"
     mypath2 = "L:\Fees\Reporting\Reconciliations\Monthly Fee Reconciliation Macro\Monthly Fee Run Reports\Bank Batch Data\"
 
     'Copy 'AIL Paid Report' data "AIL Summary" tab
-    Dim wsByProduct As Worksheet
     Set wbAILPaidReport = Workbooks.Open(mypath & "AIL Paid Report.xls")
-    Set wsByProduct = wbAILPaidReport.Sheets("By Product")
-    wsByProduct.Range("A2:D2", Range("A2:D2").End(xlDown)).Copy wsAILSummary.Range("M1")
+    Set wsBaseData = wbAILPaidReport.Sheets("By Product")
+    LR = wsBaseData.Cells(wsBaseData.Rows.Count, "A").End(xlUp).Row
+    wsBaseData.Range("A2:D2" & LR).Copy wsAILSummary.Range("M1")
     wbAILPaidReport.Close savechanges:=False
 
     'Copy 'Client Fee rebate' data into "BaseData - Tech" tab
     Set wbClientFeeRebate = Workbooks.Open(mypath & "Client Fee Rebate.xls")
+    wbClientFeeRebate.Activate
     Set wsBaseData = wbClientFeeRebate.Sheets("BaseData")
-    wsBaseData.Range("A2:AM2" & Range("A2:AM2").End(xlDown)).Copy wsBaseDataTech.Range("A2")
+    LR = wsBaseData.Cells(wsBaseData.Rows.Count, "A").End(xlUp).Row
+    wsBaseData.Range("A2:AM" & LR).Copy wsBaseDataTech.Range("A2")
     wbClientFeeRebate.Close savechanges:=False
 
     'Copy 'Customer Paid Fees' data into "BaseData - Tech" tab
@@ -131,9 +136,10 @@ Sub Monthlyfeerun()
     Set wbInsuranceFees = Workbooks.Open(mypath & "Insurance Fees.xls")
     Set wsBaseData = wbInsuranceFees.Sheets("BaseData")
     LR = wsBaseData.Cells(wsBaseData.Rows.Count, "A").End(xlUp).Row
+    wsBaseData.Activate
     wsBaseData.Cells.AutoFilter
     wsBaseData.Range("A1:AP" & LR).AutoFilter Field:=21, Criteria1:="PendingExternalBank"
-    wsBaseData.Range("A2:AP" & LR).Copy wsBaseDataInsurance.Range("A2").End(xlDown).Offset(0, 1)
+    wsBaseData.Range("A2:AP" & LR).Copy wsBaseDataInsurance.Range("A2")
     wbInsuranceFees.Close savechanges:=False
 
     'Copy 'Dealer Rebate Fees' data into 'BaseData - Dealer" tab
@@ -142,7 +148,7 @@ Sub Monthlyfeerun()
     LR = wsBaseData.Cells(wsBaseData.Rows.Count, "A").End(xlUp).Row
     wsBaseData.Cells.AutoFilter
     wsBaseData.Range("A1:AP" & LR).AutoFilter Field:=21, Criteria1:="PendingExternalBank"
-    wsBaseData.Range("A2:AP" & LR).Copy wsBaseDataDealer.Range("A2").End(xlDown).Offset(0, 1)
+    wsBaseData.Range("A2:AP" & LR).Copy wsBaseDataDealer.Range("A2").End(xlDown).Offset(1, 0)
     wbDealerRebateFees.Close savechanges:=False
 
     'Copy 'Model Unpaid Fees' data 'BaseData - Dealer" tab
@@ -152,7 +158,7 @@ Sub Monthlyfeerun()
     wsBaseData.Cells.AutoFilter
     wsBaseData.Range("A1:AP" & LR).AutoFilter Field:=21, Criteria1:="PendingExternalBank"
     wsBaseData.Range("A1:AP" & LR).AutoFilter Field:=35, Criteria1:="*dealer*"
-    wsBaseData.Range("A2:AP" & LR).Copy wsBaseDataDealer.Range("A2").End(xlDown).Offset(0, 1)
+    wsBaseData.Range("A2:AP" & LR).Copy wsBaseDataDealer.Range("A2").End(xlDown).Offset(1, 0)
     wbModelUnpaidFees.Close savechanges:=False
 
     'Copy 'Model Unpaid Fees' data into "BaseData - Customer" tab.
@@ -216,143 +222,39 @@ Sub Monthlyfeerun()
     wbBankBatchData.Close savechanges:=False
 
     'copy Batch numbers into rec.
-    wsBatchID.Range("B2", Range("B2").End(xlDown)).Copy wsSummary.Range("M20")
+    wsBatchID.Activate
+    wsBatchID.Range("B2", Range("B2").End(xlDown)).Copy
+    wsSummary.Range("M20").PasteSpecial xlPasteValues
 
     'Refresh pivot table tab
-    For Each pt In wsPivots
-        pt.RefreshTable
-    Next pt
-    
-'    Dim pt As PivotTable
-'    Dim ws As Worksheet
-'    For Each ws In ThisWorkbook.Worksheets 'ActiveWorkbook.Worksheets
-'        For Each pt In ws.PivotTables
-'            pt.RefreshTable
-'        Next pt
-'    Next ws
+    wsPivots.Activate
+    wsPivots.Range("C4").Select
+    ActiveWorkbook.RefreshAll
 
-'    Return to summary screen and clean up batch lines
-'    Sheets("Summary").Range("M19:N45").Select
-'    Selection.Borders(xlDiagonalDown).LineStyle = xlNone
-'    Selection.Borders(xlDiagonalUp).LineStyle = xlNone
-'    With Selection.Borders(xlEdgeLeft)
-'        .LineStyle = xlContinuous
-'        .ColorIndex = 0
-'        .TintAndShade = 0
-'        .Weight = xlThin
-'    End With
-'    With Selection.Borders(xlEdgeTop)
-'        .LineStyle = xlContinuous
-'        .ColorIndex = 0
-'        .TintAndShade = 0
-'        .Weight = xlThin
-'    End With
-'    With Selection.Borders(xlEdgeBottom)
-'        .LineStyle = xlContinuous
-'        .ColorIndex = 0
-'        .TintAndShade = 0
-'        .Weight = xlThin
-'    End With
-'    With Selection.Borders(xlEdgeRight)
-'        .LineStyle = xlContinuous
-'        .ColorIndex = 0
-'        .TintAndShade = 0
-'        .Weight = xlThin
-'    End With
-'    With Selection.Borders(xlInsideVertical)
-'        .LineStyle = xlContinuous
-'        .ColorIndex = 0
-'        .TintAndShade = 0
-'        .Weight = xlThin
-'    End With
-'    With Selection.Borders(xlInsideHorizontal)
-'        .LineStyle = xlContinuous
-'        .ColorIndex = 0
-'        .TintAndShade = 0
-'        .Weight = xlThin
-'    End With
-'    Range("M19:N45").Select
-'    With Selection.Font
-'        .Name = "Calibri"
-'        .Strikethrough = False
-'        .Superscript = False
-'        .Subscript = False
-'        .OutlineFont = False
-'        .Shadow = False
-'        .Underline = xlUnderlineStyleNone
-'        .TintAndShade = 0
-'        .ThemeFont = xlThemeFontMinor
-'    End With
-'    With Selection.Font
-'        .Name = "Calibri"
-'        .Size = 11
-'        .Strikethrough = False
-'        .Superscript = False
-'        .Subscript = False
-'        .OutlineFont = False
-'        .Shadow = False
-'        .Underline = xlUnderlineStyleNone
-'        .TintAndShade = 0
-'        .ThemeFont = xlThemeFontMinor
-'    End With
+    With wsSummary
+        .Activate
+        .Range("U21").Copy
+        .Range("U21").PasteSpecial xlPasteValues
+        .Range("V26").Copy
+        .Range("V26").PasteSpecial xlPasteValues
+        .Columns("M:V").EntireColumn.AutoFit
+        .Range("L19").Select
+    End With
 
-'input release date of batches - usually on Day 5 of fee run, hence Day (now) +2
+    wbTarget.Activate
 
-'Dim d As Integer
-''mydate = Evaluate("WORKDAY(TODAY(),2)")
-'d = Day(Now) + 2
-'
-'    With Range("V26")
-'        .Font.Bold = True
-'        .Font.Italic = True
-'        .Copy
-'        .PasteSpecial xlPasteValues
-'    End With
-    
-    'input monthly fee run month into cell u20
-'    Range("U21").Copy
-'    Range("U21").PasteSpecial xlPasteValues
-'    Columns("M:V").EntireColumn.AutoFit
+    Dim IntialName As String
+    Dim sFileSaveName As Variant
+    Dim InitialName As String
 
-With wsSummary
-    .Range("U21").Copy
-    .Range("U21").PasteSpecial xlPasteValues
-    .Columns("M:V").EntireColumn.AutoFit
-End With
+    IntialName = "Sample Output"
 
-'Automatically save file into desired location
+    sFileSaveName = Application.GetSaveAsFilename(InitialFileName:=InitialName, FileFilter:="Excel Files (*.xlsx), *.xlsx")
 
-'ActiveWorkbook.SaveAs Filename:= _
-        "C:\Users\ivl\Desktop\Rec Marco build\Monthly Fee Reconciliation - " & Format(Date, "yyyymmdd") & ".xlsm", _
-        FileFormat:=xlOpenXMLWorkbookMacroEnabled, _
-        Password:="", _
-        WriteResPassword:="", _
-        ReadOnlyRecommended:=False, _
-        CreateBackup:=False
-
-Dim IntialName As String
-Dim sFileSaveName As Variant
-Dim InitialName As String
-
-IntialName = "Sample Output"
-
-sFileSaveName = Application.GetSaveAsFilename(InitialFileName:=InitialName, FileFilter:="Excel Files (*.xlsx), *.xlsx")
-
-If sFileSaveName <> False Then
-
-ActiveWorkbook.SaveAs sFileSaveName, FileFormat:=51
-
-End If
-
-'return to summary screen
-
-Sheets("Summary").Select
-ActiveSheet.Range("L19").Select
-        
-MsgBox "Reports extracted. Please check variances"
-
-'======= Issues to be Addressed================
-'Insurance data - check if copied to 'Insurance' tab as well as 'Dealer' tab for FT 43
-'==============================================
+    If sFileSaveName <> False Then
+        ActiveWorkbook.SaveAs sFileSaveName, FileFormat:=51
+    End If
+ 
+    'MsgBox "Reports extracted. Please check variances"
 
 End Sub
